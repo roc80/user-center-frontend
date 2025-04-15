@@ -1,19 +1,18 @@
 import {Footer} from '@/components';
-import {login} from '@/services/ant-design-pro/api';
+import {register} from '@/services/ant-design-pro/api';
 import {
   LockOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 import {
   LoginForm,
-  ProFormCheckbox,
   ProFormText,
 } from '@ant-design/pro-components';
 import {FormattedMessage, history, SelectLang, useIntl, useModel, Helmet, Link} from '@umijs/max';
 import React, {useState} from 'react';
 import {flushSync} from 'react-dom';
 import {createStyles} from 'antd-style';
-import {Alert, message} from "antd";
+import {Alert, Form, message} from "antd";
 
 const useStyles = createStyles(({token}) => {
   return {
@@ -76,20 +75,21 @@ const LoginMessage: React.FC<{
   );
 };
 
-const Login: React.FC = () => {
-  const [userLoginState, setUserLoginState] = useState<API.LoginResult>({
-    user: undefined,
-    msg: '',
+const Register: React.FC = () => {
+  const [userLoginState, setUserLoginState] = useState<API.RegisterResult>({
+    id: 1,
+    msg: ''
   });
   const {initialState, setInitialState} = useModel('@@initialState');
   const {styles} = useStyles();
-  const intl = useIntl();
+  useIntl();
+  const [form] = Form.useForm();
 
   const fetchUserInfo = async () => {
     const userInfo = await initialState?.fetchUserInfo?.();
     if (userInfo) {
       flushSync(() => {
-        setInitialState((s: any) => ({
+        setInitialState((s) => ({
           ...s,
           currentUser: userInfo,
         }));
@@ -97,17 +97,14 @@ const Login: React.FC = () => {
     }
   };
 
-  const handleSubmit = async (values: API.LoginParams) => {
+  const handleSubmit = async (values: API.RegisterParams) => {
     try {
       // 登录
-      const result = await login({...values});
-      if (result.user) {
-        const defaultLoginSuccessMessage = intl.formatMessage({
-          id: 'pages.login.success',
-          defaultMessage: '登录成功！',
-        });
-        message.success(defaultLoginSuccessMessage);
-        console.log('Welcome! ');
+      const result = await register({...values});
+      if (result.id && result.id > 0) {
+        const defaultRegisterSuccessMessage = result.msg;
+        message.success(defaultRegisterSuccessMessage);
+        console.log(result);
         await fetchUserInfo();
         const urlParams = new URL(window.location.href).searchParams;
         history.push(urlParams.get('redirect') || '/');
@@ -116,15 +113,12 @@ const Login: React.FC = () => {
       // 如果失败去设置用户错误信息
       setUserLoginState(result);
     } catch (error) {
-      const defaultLoginFailureMessage = intl.formatMessage({
-        id: 'pages.login.failure',
-        defaultMessage: '登录失败，请重试！',
-      });
+      const defaultRegisterFailureMessage = '注册失败，请重试！';
       console.log(error);
-      message.error(defaultLoginFailureMessage);
+      message.error(defaultRegisterFailureMessage);
     }
   };
-  const {user, msg} = userLoginState;
+  const {id, msg} = userLoginState;
 
   return (
     <div className={styles.container}>
@@ -141,6 +135,14 @@ const Login: React.FC = () => {
         }}
       >
         <LoginForm
+          form={form}
+          submitter={
+            {
+              searchConfig: {
+                submitText: '注册',
+              },
+            }
+          }
           contentStyle={{
             minWidth: 280,
             maxWidth: '75vw',
@@ -152,10 +154,10 @@ const Login: React.FC = () => {
             autoLogin: true,
           }}
           onFinish={async (values) => {
-            await handleSubmit(values as API.LoginParams);
+            await handleSubmit(values as API.RegisterParams);
           }}
         >
-          {user === null && (
+          {id <= 0 && (
             <LoginMessage
               content={msg}
             />
@@ -205,23 +207,40 @@ const Login: React.FC = () => {
                   },
                 ]}
               />
+              <ProFormText.Password
+                name="repeatPassword"
+                fieldProps={{
+                  size: 'large',
+                  prefix: <LockOutlined/>,
+                }}
+                placeholder={'确认密码'}
+                rules={[
+                  {
+                    required: true,
+                    message: (
+                      <FormattedMessage
+                        id="pages.login.password.required"
+                        defaultMessage="请再次输入密码！"
+                      />
+                    ),
+                  },
+                  {
+                    validator: (_, value) => {
+                      if (!value || form.getFieldValue('password') === value) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(new Error('两次输入的密码不一致'));
+                    },
+                  },
+                ]}
+              />
             </>
           )}
-          <div
-            style={{
-              marginBottom: 24,
-            }}
-          >
-            <ProFormCheckbox noStyle name="autoLogin">
-              <FormattedMessage id="pages.login.rememberMe" defaultMessage="自动登录"/>
-            </ProFormCheckbox>
-            <Link to="/user/register">注册</Link>
-            <a
-              style={{
-                float: 'right',
-              }}
-            >
-              <FormattedMessage id="pages.login.forgotPassword" defaultMessage="忘记密码"/>
+          <div>
+            <a style={{
+              float: 'right',
+            }}>
+              <Link to="/user/login">已有账号？点击登录</Link>
             </a>
           </div>
         </LoginForm>
@@ -231,4 +250,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login;
+export default Register;

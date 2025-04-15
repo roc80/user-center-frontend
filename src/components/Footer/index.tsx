@@ -22,6 +22,7 @@ const Footer: React.FC = () => {
           blankTarget: true,
         },
       ]}
+      copyright={'roc\'s demo'}
     />
   );
 };
