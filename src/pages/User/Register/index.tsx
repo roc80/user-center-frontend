@@ -1,14 +1,8 @@
 import {Footer} from '@/components';
 import {register} from '@/services/ant-design-pro/api';
-import {
-  LockOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
-import {
-  LoginForm,
-  ProFormText,
-} from '@ant-design/pro-components';
-import {FormattedMessage, history, SelectLang, useIntl, useModel, Helmet, Link} from '@umijs/max';
+import {LockOutlined, UserOutlined,} from '@ant-design/icons';
+import {LoginForm, ProFormText,} from '@ant-design/pro-components';
+import {Helmet, history, Link, useIntl, useModel} from '@umijs/max';
 import React, {useState} from 'react';
 import {flushSync} from 'react-dom';
 import {createStyles} from 'antd-style';
@@ -49,16 +43,6 @@ const useStyles = createStyles(({token}) => {
     },
   };
 });
-
-const Lang = () => {
-  const {styles} = useStyles();
-
-  return (
-    <div className={styles.lang} data-lang="">
-      {SelectLang && <SelectLang/>}
-    </div>
-  );
-};
 
 const LoginMessage: React.FC<{
   content: string;
@@ -127,7 +111,6 @@ const Register: React.FC = () => {
           roc
         </title>
       </Helmet>
-      <Lang/>
       <div
         style={{
           flex: '1',
@@ -147,7 +130,7 @@ const Register: React.FC = () => {
             minWidth: 280,
             maxWidth: '75vw',
           }}
-          logo={<img alt="logo" src="/logo.jpg"/>}
+          logo={<img alt="logo" src="/logo.svg"/>}
           title="roc"
           subTitle={'roc\'s demo'}
           initialValues={{
@@ -174,12 +157,7 @@ const Register: React.FC = () => {
                 rules={[
                   {
                     required: true,
-                    message: (
-                      <FormattedMessage
-                        id="pages.login.username.required"
-                        defaultMessage="请输入用户名!"
-                      />
-                    ),
+                    message: "请输入用户名!",
                   },
                 ]}
               />
@@ -193,12 +171,7 @@ const Register: React.FC = () => {
                 rules={[
                   {
                     required: true,
-                    message: (
-                      <FormattedMessage
-                        id="pages.login.password.required"
-                        defaultMessage="请输入密码！"
-                      />
-                    ),
+                    message: "请输入密码！",
                   },
                   {
                     min: 8,
@@ -217,12 +190,7 @@ const Register: React.FC = () => {
                 rules={[
                   {
                     required: true,
-                    message: (
-                      <FormattedMessage
-                        id="pages.login.password.required"
-                        defaultMessage="请再次输入密码！"
-                      />
-                    ),
+                    message: "请再次输入密码！",
                   },
                   {
                     validator: (_, value) => {
@@ -236,12 +204,13 @@ const Register: React.FC = () => {
               />
             </>
           )}
-          <div>
-            <a style={{
+          <div
+            style={{
+              marginBottom: 24,
               float: 'right',
-            }}>
-              <Link to="/user/login">已有账号？点击登录</Link>
-            </a>
+            }}
+          >
+              <Link to="/user/login">已有账号？去登录</Link>
           </div>
         </LoginForm>
       </div>

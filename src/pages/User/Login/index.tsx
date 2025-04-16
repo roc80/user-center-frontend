@@ -1,15 +1,8 @@
 import {Footer} from '@/components';
 import {login} from '@/services/ant-design-pro/api';
-import {
-  LockOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
-import {
-  LoginForm,
-  ProFormCheckbox,
-  ProFormText,
-} from '@ant-design/pro-components';
-import {FormattedMessage, history, SelectLang, useIntl, useModel, Helmet, Link} from '@umijs/max';
+import {LockOutlined, UserOutlined,} from '@ant-design/icons';
+import {LoginForm, ProFormCheckbox, ProFormText,} from '@ant-design/pro-components';
+import {Helmet, history, Link, useIntl, useModel} from '@umijs/max';
 import React, {useState} from 'react';
 import {flushSync} from 'react-dom';
 import {createStyles} from 'antd-style';
@@ -50,16 +43,6 @@ const useStyles = createStyles(({token}) => {
     },
   };
 });
-
-const Lang = () => {
-  const {styles} = useStyles();
-
-  return (
-    <div className={styles.lang} data-lang="">
-      {SelectLang && <SelectLang/>}
-    </div>
-  );
-};
 
 const LoginMessage: React.FC<{
   content: string;
@@ -133,7 +116,6 @@ const Login: React.FC = () => {
           roc
         </title>
       </Helmet>
-      <Lang/>
       <div
         style={{
           flex: '1',
@@ -145,7 +127,7 @@ const Login: React.FC = () => {
             minWidth: 280,
             maxWidth: '75vw',
           }}
-          logo={<img alt="logo" src="/logo.jpg"/>}
+          logo={<img alt="logo" src="/logo.svg"/>}
           title="roc"
           subTitle={'roc\'s demo'}
           initialValues={{
@@ -172,12 +154,7 @@ const Login: React.FC = () => {
                 rules={[
                   {
                     required: true,
-                    message: (
-                      <FormattedMessage
-                        id="pages.login.username.required"
-                        defaultMessage="请输入用户名!"
-                      />
-                    ),
+                    message: "请输入用户名!",
                   },
                 ]}
               />
@@ -191,12 +168,7 @@ const Login: React.FC = () => {
                 rules={[
                   {
                     required: true,
-                    message: (
-                      <FormattedMessage
-                        id="pages.login.password.required"
-                        defaultMessage="请输入密码！"
-                      />
-                    ),
+                    message: "请输入密码！",
                   },
                   {
                     min: 8,
@@ -213,16 +185,15 @@ const Login: React.FC = () => {
             }}
           >
             <ProFormCheckbox noStyle name="autoLogin">
-              <FormattedMessage id="pages.login.rememberMe" defaultMessage="自动登录"/>
+              自动登录
             </ProFormCheckbox>
-            <Link to="/user/register">注册</Link>
-            <a
+            <div
               style={{
                 float: 'right',
               }}
             >
-              <FormattedMessage id="pages.login.forgotPassword" defaultMessage="忘记密码"/>
-            </a>
+              <Link to="/user/register">没有账号？去注册</Link>
+            </div>
           </div>
         </LoginForm>
       </div>

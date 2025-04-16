@@ -1,20 +1,22 @@
 // @ts-ignore
 /* eslint-disable */
-import { request } from '@umijs/max';
+import {request} from '@umijs/max';
 
 /** 获取当前的用户 GET /
  * api/user/current */
 export async function currentUser(options?: { [key: string]: any }) {
-  return request<
+  const user = request<
     API.CurrentUser
   >('/api/user/current', {
     method: 'GET',
     ...(options || {}),
   });
+  return user;
 }
 
 /** 退出登录接口 POST /api/login/outLogin */
 export async function outLogin(options?: { [key: string]: any }) {
+  // TODO@lp 用户登出
   return request<Record<string, any>>('/api/login/outLogin', {
     method: 'POST',
     ...(options || {}),
