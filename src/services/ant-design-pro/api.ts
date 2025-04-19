@@ -16,8 +16,7 @@ export async function currentUser(options?: { [key: string]: any }) {
 
 /** 退出登录接口 POST /api/login/outLogin */
 export async function outLogin(options?: { [key: string]: any }) {
-  // TODO@lp 用户登出
-  return request<Record<string, any>>('/api/login/outLogin', {
+  return request<API.BaseResponse>('/api/user/logout', {
     method: 'POST',
     ...(options || {}),
   });

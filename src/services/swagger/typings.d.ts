@@ -1,4 +1,12 @@
 declare namespace API {
+
+  type BaseResponse = {
+    code?: number;
+    message?: string;
+    description?: string;
+    data?: any;
+  };
+
   type ApiResponse = {
     code?: number;
     type?: string;
