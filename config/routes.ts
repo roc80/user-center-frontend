@@ -16,12 +16,12 @@ export default [
     layout: false,
     routes: [
       {
-        name: 'login',
+        name: '登录',
         path: '/user/login',
         component: './User/Login',
       },
       {
-        name: 'register',
+        name: '注册',
         path: '/user/register',
         component: './User/Register',
       },
@@ -29,13 +29,13 @@ export default [
   },
   {
     path: '/welcome',
-    name: 'welcome',
+    name: '欢迎',
     icon: 'smile',
     component: './Welcome',
   },
   {
     path: '/admin',
-    name: 'admin',
+    name: '管理员',
     icon: 'crown',
     access: 'canAdmin',
     routes: [

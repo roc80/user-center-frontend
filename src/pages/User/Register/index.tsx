@@ -1,14 +1,14 @@
-import {Footer} from '@/components';
-import {register} from '@/services/ant-design-pro/api';
-import {LockOutlined, UserOutlined,} from '@ant-design/icons';
-import {LoginForm, ProFormText,} from '@ant-design/pro-components';
-import {Helmet, history, Link, useIntl, useModel} from '@umijs/max';
-import React, {useState} from 'react';
-import {flushSync} from 'react-dom';
-import {createStyles} from 'antd-style';
-import {Alert, Form, message} from "antd";
+import { Footer } from '@/components';
+import { register } from '@/services/ant-design-pro/api';
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { LoginForm, ProFormText } from '@ant-design/pro-components';
+import { Helmet, Link, history, useModel } from '@umijs/max';
+import { Form, message } from 'antd';
+import { createStyles } from 'antd-style';
+import React from 'react';
+import { flushSync } from 'react-dom';
 
-const useStyles = createStyles(({token}) => {
+const useStyles = createStyles(({ token }) => {
   return {
     action: {
       marginLeft: '8px',
@@ -43,30 +43,9 @@ const useStyles = createStyles(({token}) => {
     },
   };
 });
-
-const LoginMessage: React.FC<{
-  content: string;
-}> = ({content}) => {
-  return (
-    <Alert
-      style={{
-        marginBottom: 24,
-      }}
-      message={content}
-      type="error"
-      showIcon
-    />
-  );
-};
-
 const Register: React.FC = () => {
-  const [userLoginState, setUserLoginState] = useState<API.RegisterResult>({
-    id: 1,
-    msg: ''
-  });
-  const {initialState, setInitialState} = useModel('@@initialState');
-  const {styles} = useStyles();
-  useIntl();
+  const { initialState, setInitialState } = useModel('@@initialState');
+  const { styles } = useStyles();
   const [form] = Form.useForm();
 
   const fetchUserInfo = async () => {
@@ -83,33 +62,28 @@ const Register: React.FC = () => {
 
   const handleSubmit = async (values: API.RegisterParams) => {
     try {
-      // 登录
-      const result = await register({...values});
-      if (result.id && result.id > 0) {
-        const defaultRegisterSuccessMessage = result.msg;
-        message.success(defaultRegisterSuccessMessage);
-        console.log(result);
+      const response = await register({ ...values });
+      console.log(response);
+      if (response.code === 20000) {
+        message.success(response.message + 'userid=' + response.data);
         await fetchUserInfo();
         const urlParams = new URL(window.location.href).searchParams;
         history.push(urlParams.get('redirect') || '/');
         return;
+      } else {
+        message.error(response.description + 'userid=' + response.data);
       }
-      // 如果失败去设置用户错误信息
-      setUserLoginState(result);
     } catch (error) {
       const defaultRegisterFailureMessage = '注册失败，请重试！';
       console.log(error);
       message.error(defaultRegisterFailureMessage);
     }
   };
-  const {id, msg} = userLoginState;
 
   return (
     <div className={styles.container}>
       <Helmet>
-        <title>
-          roc
-        </title>
+        <title>roc</title>
       </Helmet>
       <div
         style={{
@@ -119,20 +93,18 @@ const Register: React.FC = () => {
       >
         <LoginForm
           form={form}
-          submitter={
-            {
-              searchConfig: {
-                submitText: '注册',
-              },
-            }
-          }
+          submitter={{
+            searchConfig: {
+              submitText: '注册',
+            },
+          }}
           contentStyle={{
             minWidth: 280,
             maxWidth: '75vw',
           }}
-          logo={<img alt="logo" src="/logo.svg"/>}
+          logo={<img alt="logo" src="/logo.svg" />}
           title="roc"
-          subTitle={'roc\'s demo'}
+          subTitle={"roc's demo"}
           initialValues={{
             autoLogin: true,
           }}
@@ -140,24 +112,19 @@ const Register: React.FC = () => {
             await handleSubmit(values as API.RegisterParams);
           }}
         >
-          {id <= 0 && (
-            <LoginMessage
-              content={msg}
-            />
-          )}
-          {(
+          {
             <>
               <ProFormText
                 name="username"
                 fieldProps={{
                   size: 'large',
-                  prefix: <UserOutlined/>,
+                  prefix: <UserOutlined />,
                 }}
                 placeholder={'用户名'}
                 rules={[
                   {
                     required: true,
-                    message: "请输入用户名!",
+                    message: '请输入用户名!',
                   },
                 ]}
               />
@@ -165,18 +132,18 @@ const Register: React.FC = () => {
                 name="password"
                 fieldProps={{
                   size: 'large',
-                  prefix: <LockOutlined/>,
+                  prefix: <LockOutlined />,
                 }}
                 placeholder={'密码'}
                 rules={[
                   {
                     required: true,
-                    message: "请输入密码！",
+                    message: '请输入密码！',
                   },
                   {
                     min: 8,
                     type: 'string',
-                    message: '密码至少为8位'
+                    message: '密码至少为8位',
                   },
                 ]}
               />
@@ -184,13 +151,13 @@ const Register: React.FC = () => {
                 name="repeatPassword"
                 fieldProps={{
                   size: 'large',
-                  prefix: <LockOutlined/>,
+                  prefix: <LockOutlined />,
                 }}
                 placeholder={'确认密码'}
                 rules={[
                   {
                     required: true,
-                    message: "请再次输入密码！",
+                    message: '请再次输入密码！',
                   },
                   {
                     validator: (_, value) => {
@@ -203,18 +170,18 @@ const Register: React.FC = () => {
                 ]}
               />
             </>
-          )}
+          }
           <div
             style={{
               marginBottom: 24,
               float: 'right',
             }}
           >
-              <Link to="/user/login">已有账号？去登录</Link>
+            <Link to="/user/login">已有账号？去登录</Link>
           </div>
         </LoginForm>
       </div>
-      <Footer/>
+      <Footer />
     </div>
   );
 };

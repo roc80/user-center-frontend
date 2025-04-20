@@ -1,8 +1,8 @@
-import {PlusOutlined} from '@ant-design/icons';
-import type {ActionType, ProColumns} from '@ant-design/pro-components';
-import {ProTable} from '@ant-design/pro-components';
-import {Button} from 'antd';
-import {useRef} from 'react';
+import { PlusOutlined } from '@ant-design/icons';
+import type { ActionType, ProColumns } from '@ant-design/pro-components';
+import { ProTable } from '@ant-design/pro-components';
+import { Button } from 'antd';
+import { useRef } from 'react';
 import request from 'umi-request';
 
 export const waitTimePromise = async (time: number = 100) => {
@@ -50,7 +50,7 @@ const columns: ProColumns<API.CurrentUser>[] = [
       } else {
         return record.userName;
       }
-    }
+    },
   },
   {
     title: '性别',
@@ -65,7 +65,7 @@ const columns: ProColumns<API.CurrentUser>[] = [
     render(_, record) {
       if (record.gender === 0) {
         return <span style={{ color: 'blue' }}>♂</span>;
-      } else if (record.gender === 1){
+      } else if (record.gender === 1) {
         return <span style={{ color: 'red' }}>♀</span>;
       } else {
         return '---';
@@ -82,7 +82,7 @@ const columns: ProColumns<API.CurrentUser>[] = [
         return record.email.length > 20 ? record.email.slice(0, 20) + '...' : record.email;
       }
       return '---';
-    }
+    },
   },
   {
     title: '手机号码',
@@ -94,7 +94,7 @@ const columns: ProColumns<API.CurrentUser>[] = [
         return record.phone.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
       }
       return '---';
-    }
+    },
   },
   {
     title: '身份',
@@ -134,7 +134,7 @@ const columns: ProColumns<API.CurrentUser>[] = [
       if (record.isValid === 1) {
         return <span style={{ color: 'red' }}>Banned</span>;
       } else {
-        return <span >Available</span>;
+        return <span>Available</span>;
       }
     },
   },
@@ -150,11 +150,7 @@ export default () => {
       request={async (params, sort, filter) => {
         console.log(sort, filter);
         await waitTime(2000);
-        return request<{
-          code: number;
-          msg: string;
-          data: API.CurrentUser[];
-        }>('/api/user/search/all', {
+        return request<API.BaseResponse<API.CurrentUser[]>>('/api/user/search/all', {
           params,
         });
       }}
@@ -178,18 +174,6 @@ export default () => {
       options={{
         setting: {
           listsHeight: 400,
-        },
-      }}
-      form={{
-        // 由于配置了 transform，提交的参数与定义的不同这里需要转化一下
-        syncToUrl: (values, type) => {
-          if (type === 'get') {
-            return {
-              ...values,
-              created_at: [values.startTime, values.endTime],
-            };
-          }
-          return values;
         },
       }}
       pagination={{

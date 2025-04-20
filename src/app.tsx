@@ -1,13 +1,12 @@
-import {AvatarDropdown, AvatarName, Footer, Question, SelectLang} from '@/components';
-import {LinkOutlined} from '@ant-design/icons';
-import type {Settings as LayoutSettings} from '@ant-design/pro-components';
-import {SettingDrawer} from '@ant-design/pro-components';
-import type {RunTimeLayoutConfig} from '@umijs/max';
-import {history, Link} from '@umijs/max';
+import { AvatarDropdown, AvatarName, Footer, Question, SelectLang } from '@/components';
+import { currentUser as queryCurrentUser } from '@/services/ant-design-pro/api';
+import { LinkOutlined } from '@ant-design/icons';
+import type { Settings as LayoutSettings } from '@ant-design/pro-components';
+import { SettingDrawer } from '@ant-design/pro-components';
+import type { RunTimeLayoutConfig } from '@umijs/max';
+import { Link, history } from '@umijs/max';
 import defaultSettings from '../config/defaultSettings';
-import {errorConfig} from './requestErrorConfig';
-import {currentUser as queryCurrentUser} from '@/services/ant-design-pro/api';
-import React from 'react';
+import { errorConfig } from './requestErrorConfig';
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
@@ -16,8 +15,8 @@ const WHITE_LIST = ['/user/login', '/user/register'];
 function checkLoginState(initialState: { currentUser?: API.CurrentUser } | undefined) {
   const { location } = history;
   if (initialState?.currentUser) {
-    if(WHITE_LIST.includes(location.pathname)) {
-      history.back()
+    if (WHITE_LIST.includes(location.pathname)) {
+      history.back();
     }
   } else {
     if (!WHITE_LIST.includes(location.pathname)) {
@@ -46,8 +45,8 @@ export async function getInitialState(): Promise<{
     return undefined;
   };
   const currentUser = await fetchUserInfo();
-  console.log('currentUser: ', currentUser)
-  checkLoginState({currentUser})
+  console.log('currentUser: ', currentUser);
+  checkLoginState({ currentUser });
   return {
     fetchUserInfo,
     currentUser,
@@ -71,7 +70,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     },
     footerRender: () => <Footer />,
     onPageChange: () => {
-      checkLoginState(initialState)
+      checkLoginState(initialState);
     },
     bgLayoutImgList: [
       {
@@ -136,7 +135,5 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
  * @doc https://umijs.org/docs/max/request#配置
  */
 export const request = {
-  // TODO@lP 这里的作用是什么？发现打开的话，proxy无法生效。
-  // baseURL: "http://localhost:8080",
   errorConfig,
 };
