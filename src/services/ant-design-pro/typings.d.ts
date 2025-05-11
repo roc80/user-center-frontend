@@ -12,14 +12,15 @@ declare namespace API {
 
   type CurrentUser = {
     userName: string;
-    avatarUrl?: string;
-    id: string;
-    gender?: number;
-    email?: string;
-    phone?: string;
-    userRole: number;
+    avatarUrl: string;
+    userId: number;
+    gender: string;
+    email: string;
+    phone: string;
+    userRole: string;
     createDatetime: string;
-    isValid: number;
+    state: string;
+    tags: string;
   };
 
   type PageParams = {

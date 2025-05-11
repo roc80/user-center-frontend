@@ -1,8 +1,8 @@
-import { PlusOutlined } from '@ant-design/icons';
-import type { ActionType, ProColumns } from '@ant-design/pro-components';
-import { ProTable } from '@ant-design/pro-components';
-import { Button } from 'antd';
-import { useRef } from 'react';
+import {PlusOutlined} from '@ant-design/icons';
+import type {ActionType, ProColumns} from '@ant-design/pro-components';
+import {ProTable} from '@ant-design/pro-components';
+import {Button} from 'antd';
+import {useRef} from 'react';
 import request from 'umi-request';
 
 export const waitTimePromise = async (time: number = 100) => {
@@ -20,7 +20,7 @@ export const waitTime = async (time: number = 100) => {
 const columns: ProColumns<API.CurrentUser>[] = [
   {
     title: 'id',
-    dataIndex: 'id',
+    dataIndex: 'userId',
     valueType: 'indexBorder',
     width: 48,
   },
@@ -30,7 +30,7 @@ const columns: ProColumns<API.CurrentUser>[] = [
     render: (_, record) => (
       // 默认展示的图片
       <img
-        key={record.id}
+        key={record.userId}
         src={record.avatarUrl}
         alt="avatar"
         style={{
@@ -59,14 +59,15 @@ const columns: ProColumns<API.CurrentUser>[] = [
     onFilter: true,
     valueType: 'select',
     valueEnum: {
-      0: '男',
-      1: '女',
+      '男': {text: '男'},
+      '女': {text: '女'},
+      '': {text: '其他'},
     },
     render(_, record) {
-      if (record.gender === 0) {
-        return <span style={{ color: 'blue' }}>♂</span>;
-      } else if (record.gender === 1) {
-        return <span style={{ color: 'red' }}>♀</span>;
+      if (record.gender === '男') {
+        return <span style={{color: 'blue'}}>♂</span>;
+      } else if (record.gender === '女') {
+        return <span style={{color: 'red'}}>♀</span>;
       } else {
         return '---';
       }
@@ -77,11 +78,7 @@ const columns: ProColumns<API.CurrentUser>[] = [
     dataIndex: 'email',
     copyable: true,
     render(_, record) {
-      // 长度限制
-      if (record.email) {
-        return record.email.length > 20 ? record.email.slice(0, 20) + '...' : record.email;
-      }
-      return '---';
+      return record.email.length > 20 ? record.email.slice(0, 20) + '...' : record.email;
     },
   },
   {
@@ -90,10 +87,7 @@ const columns: ProColumns<API.CurrentUser>[] = [
     copyable: true,
     render(_, record) {
       // 格式化手机号码为 111-2222-3333 的格式
-      if (record.phone) {
-        return record.phone.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
-      }
-      return '---';
+      return record.phone.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
     },
   },
   {
@@ -103,14 +97,14 @@ const columns: ProColumns<API.CurrentUser>[] = [
     onFilter: true,
     valueType: 'select',
     valueEnum: {
-      0: 'Default',
-      1: 'Admin',
+      '管理员': {text: '管理员'},
+      '普通用户': {text: '普通用户'},
     },
     render(_, record) {
-      if (record.userRole === 1) {
-        return <span style={{ color: 'green' }}>Admin</span>;
+      if (record.userRole.includes('管理')) {
+        return <span style={{color: 'green'}}>Admin</span>;
       } else {
-        return <span style={{ color: 'grey' }}>Default</span>;
+        return <span style={{color: 'grey'}}>Default</span>;
       }
     },
   },
@@ -122,19 +116,24 @@ const columns: ProColumns<API.CurrentUser>[] = [
   },
   {
     title: '状态',
-    dataIndex: 'isValid',
+    dataIndex: 'state',
     filters: true,
     onFilter: true,
     valueType: 'select',
     valueEnum: {
-      0: 'Available',
-      1: 'Banned',
+      'normal': {text: '正常'},
+      'invalid': {text: '异常'},
     },
+  },
+  {
+    title: '标签',
+    dataIndex: 'tags',
+    copyable: true,
     render(_, record) {
-      if (record.isValid === 1) {
-        return <span style={{ color: 'red' }}>Banned</span>;
+      if (record.tags.length > 20) {
+        return record.tags.slice(0, 20) + '...';
       } else {
-        return <span>Available</span>;
+        return record.tags;
       }
     },
   },
@@ -161,7 +160,7 @@ export default () => {
         persistenceKey: 'pro-table-singe-demos',
         persistenceType: 'localStorage',
         defaultValue: {
-          option: { fixed: 'right', disable: true },
+          option: {fixed: 'right', disable: true},
         },
         onChange(value) {
           console.log('value: ', value);
@@ -185,7 +184,7 @@ export default () => {
       toolBarRender={() => [
         <Button
           key="button"
-          icon={<PlusOutlined />}
+          icon={<PlusOutlined/>}
           onClick={() => {
             actionRef.current?.reload();
           }}
@@ -197,3 +196,4 @@ export default () => {
     />
   );
 };
+
