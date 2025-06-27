@@ -1,0 +1,7 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+if [ "$npm_execpath" != *pnpm* ]; then
+  echo "❌ 请使用 pnpm 安装依赖，而不是 npm 或 yarn"
+  exit 1
+fi
