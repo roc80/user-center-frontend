@@ -10,18 +10,22 @@ declare namespace API {
     dateTime: string;
   };
 
-  type CurrentUser = {
+  type User = {
     userName: string;
-    avatarUrl: string;
+    avatarUrl?: string;
     userId: number;
-    gender: string;
-    email: string;
-    phone: string;
+    gender?: string;
+    email?: string;
+    phone?: string;
     userRole: string;
     createDatetime: string;
     state: string;
-    tags: string;
   };
+
+  type LoginResponse = {
+    user: User;
+    redirectUrl: string;
+  }
 
   type PageParams = {
     current?: number;
@@ -48,6 +52,7 @@ declare namespace API {
     password?: string;
     autoLogin?: boolean;
     type?: string;
+    redirectUrl?: string;
   };
 
   type RegisterParams = {
@@ -55,4 +60,11 @@ declare namespace API {
     password?: string;
     repeatPassword?: string;
   };
+
+  type PageResponse<T> = {
+    records: T[],
+    pageNum: number,
+    pageSize: number,
+    totalNum: number,
+  }
 }

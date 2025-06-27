@@ -1,12 +1,12 @@
-import { Footer } from '@/components';
-import { login } from '@/services/ant-design-pro/api';
-import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { LoginForm, ProFormCheckbox, ProFormText } from '@ant-design/pro-components';
-import { Helmet, Link, history, useModel } from '@umijs/max';
-import { message } from 'antd';
-import { createStyles } from 'antd-style';
+import {Footer} from '@/components';
+import {login} from '@/services/ant-design-pro/api';
+import {LockOutlined, UserOutlined} from '@ant-design/icons';
+import {LoginForm, ProFormText} from '@ant-design/pro-components';
+import {Helmet, history, Link, useModel} from '@umijs/max';
+import {message} from 'antd';
+import {createStyles} from 'antd-style';
 import React from 'react';
-import { flushSync } from 'react-dom';
+import {flushSync} from 'react-dom';
 
 const useStyles = createStyles(({ token }) => {
   return {
@@ -43,6 +43,7 @@ const useStyles = createStyles(({ token }) => {
     },
   };
 });
+
 const Login: React.FC = () => {
   const { initialState, setInitialState } = useModel('@@initialState');
   const { styles } = useStyles();
@@ -61,16 +62,22 @@ const Login: React.FC = () => {
 
   const handleSubmit = async (values: API.LoginParams) => {
     try {
-      const response = await login({ ...values });
-      console.log(response);
-      if (response.code === 20000) {
-        message.success(response.message);
-        await fetchUserInfo();
-        const urlParams = new URL(window.location.href).searchParams;
-        history.push(urlParams.get('redirect') || '/');
-        return;
+      const urlParams = new URLSearchParams(window.location.search);
+      values.redirectUrl = urlParams.get('redirect_url') ?? undefined;
+      const loginResponse = await login({ ...values });
+      if (loginResponse.code === 20000) {
+        if (loginResponse?.data?.redirectUrl) {
+          // 跳转回原系统
+          window.location.href = loginResponse?.data?.redirectUrl;
+        } else {
+          message.success(loginResponse.message);
+          await fetchUserInfo();
+          const urlParams = new URL(window.location.href).searchParams;
+          history.push(urlParams.get('redirect') || '/');
+          return;
+        }
       } else {
-        message.error(response.description);
+        message.error(loginResponse.description);
       }
     } catch (error) {
       console.log(error);
@@ -78,10 +85,20 @@ const Login: React.FC = () => {
     }
   };
 
+  const getRegisterLink = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const redirectUrl = urlParams.get('redirect_url');
+    const registerPath = '/user/register';
+    if (redirectUrl) {
+      return `${registerPath}?redirect_url=${encodeURIComponent(redirectUrl)}`;
+    }
+    return registerPath;
+  }
+
   return (
     <div className={styles.container}>
       <Helmet>
-        <title>roc</title>
+        <title>欢迎登录</title>
       </Helmet>
       <div
         style={{
@@ -95,8 +112,8 @@ const Login: React.FC = () => {
             maxWidth: '75vw',
           }}
           logo={<img alt="logo" src="/logo.svg" />}
-          title="roc"
-          subTitle={"roc's demo"}
+          title="欢迎登录"
+          subTitle={"用户中心"}
           initialValues={{
             autoLogin: true,
           }}
@@ -146,15 +163,13 @@ const Login: React.FC = () => {
               marginBottom: 24,
             }}
           >
-            <ProFormCheckbox noStyle name="autoLogin">
-              自动登录
-            </ProFormCheckbox>
             <div
               style={{
                 float: 'right',
+                marginBottom: 24,
               }}
             >
-              <Link to="/user/register">没有账号？去注册</Link>
+              <Link to={getRegisterLink()}>没有账号？去注册</Link>
             </div>
           </div>
         </LoginForm>

@@ -1,5 +1,5 @@
-import { GithubOutlined } from '@ant-design/icons';
-import { DefaultFooter } from '@ant-design/pro-components';
+import {GithubOutlined} from '@ant-design/icons';
+import {DefaultFooter} from '@ant-design/pro-components';
 import React from 'react';
 
 const Footer: React.FC = () => {
@@ -16,13 +16,13 @@ const Footer: React.FC = () => {
           blankTarget: true,
         },
         {
-          key: 'Blog',
-          title: 'Blog',
-          href: 'https://roc80.github.io',
+          key: 'roc',
+          title: 'Roc\'s Space',
+          href: 'https://rocli.cn',
           blankTarget: true,
         },
       ]}
-      copyright={'roc\'s demo'}
+      copyright={'roc'}
     />
   );
 };

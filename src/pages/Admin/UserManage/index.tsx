@@ -3,21 +3,9 @@ import type {ActionType, ProColumns} from '@ant-design/pro-components';
 import {ProTable} from '@ant-design/pro-components';
 import {Button} from 'antd';
 import {useRef} from 'react';
-import request from 'umi-request';
+import {searchAllUser} from "@/services/ant-design-pro/api";
 
-export const waitTimePromise = async (time: number = 100) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(true);
-    }, time);
-  });
-};
-
-export const waitTime = async (time: number = 100) => {
-  await waitTimePromise(time);
-};
-
-const columns: ProColumns<API.CurrentUser>[] = [
+const columns: ProColumns<API.User>[] = [
   {
     title: 'id',
     dataIndex: 'userId',
@@ -31,7 +19,7 @@ const columns: ProColumns<API.CurrentUser>[] = [
       // 默认展示的图片
       <img
         key={record.userId}
-        src={record.avatarUrl}
+        src={record?.avatarUrl}
         alt="avatar"
         style={{
           width: 32,
@@ -64,6 +52,9 @@ const columns: ProColumns<API.CurrentUser>[] = [
       '': {text: '其他'},
     },
     render(_, record) {
+      if (!record?.gender) {
+        return '---';
+      }
       if (record.gender === '男') {
         return <span style={{color: 'blue'}}>♂</span>;
       } else if (record.gender === '女') {
@@ -78,7 +69,9 @@ const columns: ProColumns<API.CurrentUser>[] = [
     dataIndex: 'email',
     copyable: true,
     render(_, record) {
-      return record.email.length > 20 ? record.email.slice(0, 20) + '...' : record.email;
+      if (record?.email) {
+        return record.email.length > 20 ? record.email.slice(0, 20) + '...' : record.email;
+      }
     },
   },
   {
@@ -87,7 +80,9 @@ const columns: ProColumns<API.CurrentUser>[] = [
     copyable: true,
     render(_, record) {
       // 格式化手机号码为 111-2222-3333 的格式
-      return record.phone.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+      if (record?.phone) {
+        return record.phone.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+      }
     },
   },
   {
@@ -125,33 +120,24 @@ const columns: ProColumns<API.CurrentUser>[] = [
       'invalid': {text: '异常'},
     },
   },
-  {
-    title: '标签',
-    dataIndex: 'tags',
-    copyable: true,
-    render(_, record) {
-      if (record.tags.length > 20) {
-        return record.tags.slice(0, 20) + '...';
-      } else {
-        return record.tags;
-      }
-    },
-  },
 ];
 
 export default () => {
   const actionRef = useRef<ActionType>();
   return (
-    <ProTable<API.CurrentUser | any>
+    <ProTable<API.User>
       columns={columns}
       actionRef={actionRef}
       cardBordered
       request={async (params, sort, filter) => {
-        console.log(sort, filter);
-        await waitTime(2000);
-        return request<API.BaseResponse<API.CurrentUser[]>>('/api/user/search/all', {
-          params,
-        });
+        const pageNum = params.current ?? 1;
+        const pageSize = params.pageSize ?? 20;
+        const pageResponse = await searchAllUser(pageNum, pageSize);
+        return {
+          data: pageResponse.records,
+          success: true,
+          total: pageResponse.totalNum,
+        }
       }}
       editable={{
         type: 'multiple',
@@ -166,7 +152,7 @@ export default () => {
           console.log('value: ', value);
         },
       }}
-      rowKey="id"
+      rowKey="userId"
       search={{
         labelWidth: 'auto',
       }}
@@ -176,7 +162,7 @@ export default () => {
         },
       }}
       pagination={{
-        pageSize: 5,
+        pageSize: 20,
         onChange: (page) => console.log(page),
       }}
       dateFormatter="string"

@@ -1,18 +1,18 @@
-import { AvatarDropdown, AvatarName, Footer, Question, SelectLang } from '@/components';
-import { currentUser as queryCurrentUser } from '@/services/ant-design-pro/api';
-import { LinkOutlined } from '@ant-design/icons';
-import type { Settings as LayoutSettings } from '@ant-design/pro-components';
-import { SettingDrawer } from '@ant-design/pro-components';
-import type { RunTimeLayoutConfig } from '@umijs/max';
-import { Link, history } from '@umijs/max';
+import {AvatarDropdown, AvatarName, Footer, Question, SelectLang} from '@/components';
+import {currentUser as queryCurrentUser} from '@/services/ant-design-pro/api';
+import {LinkOutlined} from '@ant-design/icons';
+import type {Settings as LayoutSettings} from '@ant-design/pro-components';
+import {SettingDrawer} from '@ant-design/pro-components';
+import type {RunTimeLayoutConfig} from '@umijs/max';
+import {history, Link} from '@umijs/max';
 import defaultSettings from '../config/defaultSettings';
-import { errorConfig } from './requestErrorConfig';
+import {errorConfig} from './requestErrorConfig';
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
 const WHITE_LIST = ['/user/login', '/user/register'];
 
-function checkLoginState(initialState: { currentUser?: API.CurrentUser } | undefined) {
+function checkLoginState(initialState: { currentUser?: API.User } | undefined) {
   const { location } = history;
   if (initialState?.currentUser) {
     if (WHITE_LIST.includes(location.pathname)) {
@@ -30,9 +30,9 @@ function checkLoginState(initialState: { currentUser?: API.CurrentUser } | undef
  * */
 export async function getInitialState(): Promise<{
   settings?: Partial<LayoutSettings>;
-  currentUser?: API.CurrentUser;
+  currentUser?: API.User;
   loading?: boolean;
-  fetchUserInfo?: () => Promise<API.CurrentUser | undefined>;
+  fetchUserInfo?: () => Promise<API.User | undefined>;
 }> {
   const fetchUserInfo = async () => {
     try {

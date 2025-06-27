@@ -1,12 +1,12 @@
-import { Footer } from '@/components';
-import { register } from '@/services/ant-design-pro/api';
-import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { LoginForm, ProFormText } from '@ant-design/pro-components';
-import { Helmet, Link, history, useModel } from '@umijs/max';
-import { Form, message } from 'antd';
-import { createStyles } from 'antd-style';
+import {Footer} from '@/components';
+import {register} from '@/services/ant-design-pro/api';
+import {LockOutlined, UserOutlined} from '@ant-design/icons';
+import {LoginForm, ProFormText} from '@ant-design/pro-components';
+import {Helmet, history, Link, useModel} from '@umijs/max';
+import {Form, message} from 'antd';
+import {createStyles} from 'antd-style';
 import React from 'react';
-import { flushSync } from 'react-dom';
+import {flushSync} from 'react-dom';
 
 const useStyles = createStyles(({ token }) => {
   return {
@@ -67,8 +67,7 @@ const Register: React.FC = () => {
       if (response.code === 20000) {
         message.success(response.message + 'userid=' + response.data);
         await fetchUserInfo();
-        const urlParams = new URL(window.location.href).searchParams;
-        history.push(urlParams.get('redirect') || '/');
+        history.replace(getLoginLink())
         return;
       } else {
         message.error(response.description + 'userid=' + response.data);
@@ -80,10 +79,20 @@ const Register: React.FC = () => {
     }
   };
 
+  const getLoginLink = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const redirectUrl = urlParams.get('redirect_url');
+    const loginPath = '/user/login';
+    if (redirectUrl) {
+      return `${loginPath}?redirect_url=${encodeURIComponent(redirectUrl)}`;
+    }
+    return loginPath;
+  }
+
   return (
     <div className={styles.container}>
       <Helmet>
-        <title>roc</title>
+        <title>欢迎注册</title>
       </Helmet>
       <div
         style={{
@@ -103,8 +112,8 @@ const Register: React.FC = () => {
             maxWidth: '75vw',
           }}
           logo={<img alt="logo" src="/logo.svg" />}
-          title="roc"
-          subTitle={"roc's demo"}
+          title="欢迎注册"
+          subTitle={"用户中心"}
           initialValues={{
             autoLogin: true,
           }}
@@ -177,7 +186,7 @@ const Register: React.FC = () => {
               float: 'right',
             }}
           >
-            <Link to="/user/login">已有账号？去登录</Link>
+            <Link to={getLoginLink()}>已有账号？去登录</Link>
           </div>
         </LoginForm>
       </div>
