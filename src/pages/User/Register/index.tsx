@@ -1,12 +1,13 @@
-import {Footer} from '@/components';
-import {register} from '@/services/ant-design-pro/api';
-import {LockOutlined, UserOutlined} from '@ant-design/icons';
-import {LoginForm, ProFormText} from '@ant-design/pro-components';
-import {Helmet, history, Link, useModel} from '@umijs/max';
-import {Form, message} from 'antd';
-import {createStyles} from 'antd-style';
+import { Footer } from '@/components';
+import { register } from '@/services/ant-design-pro/api';
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { LoginForm, ProFormText } from '@ant-design/pro-components';
+import { Helmet, history, Link, useModel } from '@umijs/max';
+import { Form, message } from 'antd';
+import { createStyles } from 'antd-style';
 import React from 'react';
-import {flushSync} from 'react-dom';
+import { flushSync } from 'react-dom';
+import { getPathWithRedirectUrl, loginPath } from '@/utils/URLHelper';
 
 const useStyles = createStyles(({ token }) => {
   return {
@@ -67,7 +68,7 @@ const Register: React.FC = () => {
       if (response.code === 20000) {
         message.success(response.message + 'userid=' + response.data);
         await fetchUserInfo();
-        history.replace(getLoginLink())
+        history.replace(getPathWithRedirectUrl(loginPath));
         return;
       } else {
         message.error(response.description + 'userid=' + response.data);
@@ -78,16 +79,6 @@ const Register: React.FC = () => {
       message.error(defaultRegisterFailureMessage);
     }
   };
-
-  const getLoginLink = () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const redirectUrl = urlParams.get('redirect_url');
-    const loginPath = '/user/login';
-    if (redirectUrl) {
-      return `${loginPath}?redirect_url=${encodeURIComponent(redirectUrl)}`;
-    }
-    return loginPath;
-  }
 
   return (
     <div className={styles.container}>
@@ -113,7 +104,7 @@ const Register: React.FC = () => {
           }}
           logo={<img alt="logo" src="/logo.svg" />}
           title="欢迎注册"
-          subTitle={"用户中心"}
+          subTitle={'用户中心'}
           initialValues={{
             autoLogin: true,
           }}
@@ -186,7 +177,7 @@ const Register: React.FC = () => {
               float: 'right',
             }}
           >
-            <Link to={getLoginLink()}>已有账号？去登录</Link>
+            <Link to={getPathWithRedirectUrl(loginPath)}>已有账号？去登录</Link>
           </div>
         </LoginForm>
       </div>

@@ -1,12 +1,13 @@
-import {Footer} from '@/components';
-import {login} from '@/services/ant-design-pro/api';
-import {LockOutlined, UserOutlined} from '@ant-design/icons';
-import {LoginForm, ProFormText} from '@ant-design/pro-components';
-import {Helmet, history, Link, useModel} from '@umijs/max';
-import {message} from 'antd';
-import {createStyles} from 'antd-style';
+import { Footer } from '@/components';
+import { login } from '@/services/ant-design-pro/api';
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { LoginForm, ProFormText } from '@ant-design/pro-components';
+import { Helmet, history, Link, useModel } from '@umijs/max';
+import { message } from 'antd';
+import { createStyles } from 'antd-style';
 import React from 'react';
-import {flushSync} from 'react-dom';
+import { flushSync } from 'react-dom';
+import { getPathWithRedirectUrl, registerPath } from '@/utils/URLHelper';
 
 const useStyles = createStyles(({ token }) => {
   return {
@@ -68,7 +69,11 @@ const Login: React.FC = () => {
       if (loginResponse.code === 20000) {
         if (loginResponse?.data?.redirectUrl) {
           // 跳转回原系统
-          window.location.href = loginResponse?.data?.redirectUrl;
+          let redirectUrl = loginResponse?.data?.redirectUrl;
+          if (process.env.REACT_APP_ENV === 'dev') {
+            alert(`即将跳转回原系统，redirectUrl = ${redirectUrl}`);
+          }
+          window.location.href = redirectUrl;
         } else {
           message.success(loginResponse.message);
           await fetchUserInfo();
@@ -84,16 +89,6 @@ const Login: React.FC = () => {
       message.error('登录失败，请重试！');
     }
   };
-
-  const getRegisterLink = () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const redirectUrl = urlParams.get('redirect_url');
-    const registerPath = '/user/register';
-    if (redirectUrl) {
-      return `${registerPath}?redirect_url=${encodeURIComponent(redirectUrl)}`;
-    }
-    return registerPath;
-  }
 
   return (
     <div className={styles.container}>
@@ -113,7 +108,7 @@ const Login: React.FC = () => {
           }}
           logo={<img alt="logo" src="/logo.svg" />}
           title="欢迎登录"
-          subTitle={"用户中心"}
+          subTitle={'用户中心'}
           initialValues={{
             autoLogin: true,
           }}
@@ -169,7 +164,7 @@ const Login: React.FC = () => {
                 marginBottom: 24,
               }}
             >
-              <Link to={getRegisterLink()}>没有账号？去注册</Link>
+              <Link to={getPathWithRedirectUrl(registerPath)}>没有账号？去注册</Link>
             </div>
           </div>
         </LoginForm>

@@ -5,10 +5,10 @@ import type { Settings as LayoutSettings } from '@ant-design/pro-components';
 import { SettingDrawer } from '@ant-design/pro-components';
 import { history, Link, RequestConfig, RunTimeLayoutConfig } from '@umijs/max';
 import defaultSettings from '../config/defaultSettings';
+import { getPathWithRedirectUrl, loginPath, registerPath } from '@/utils/URLHelper';
 
 const isDev = process.env.NODE_ENV === 'development';
-const loginPath = '/user/login';
-const WHITE_LIST = ['/user/login', '/user/register'];
+const WHITE_LIST = [loginPath, registerPath];
 
 function checkLoginState(initialState: { currentUser?: API.User } | undefined) {
   const { location } = history;
@@ -18,7 +18,7 @@ function checkLoginState(initialState: { currentUser?: API.User } | undefined) {
     }
   } else {
     if (!WHITE_LIST.includes(location.pathname)) {
-      history.push(loginPath);
+      history.push(getPathWithRedirectUrl(loginPath));
     }
   }
 }
@@ -38,7 +38,7 @@ export async function getInitialState(): Promise<{
         skipErrorHandler: true,
       });
     } catch (error) {
-      history.push(loginPath);
+      history.push(getPathWithRedirectUrl(loginPath));
     }
     return undefined;
   };
@@ -135,4 +135,5 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
 export const request: RequestConfig = {
   baseURL:
     process.env.REACT_APP_ENV === 'prod' ? 'https://user-api.rocli.cn' : 'http://localhost:8080/',
+  withCredentials: true,
 };
