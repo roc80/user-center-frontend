@@ -1,12 +1,10 @@
-import {AvatarDropdown, AvatarName, Footer, Question, SelectLang} from '@/components';
-import {currentUser as queryCurrentUser} from '@/services/ant-design-pro/api';
-import {LinkOutlined} from '@ant-design/icons';
-import type {Settings as LayoutSettings} from '@ant-design/pro-components';
-import {SettingDrawer} from '@ant-design/pro-components';
-import type {RunTimeLayoutConfig} from '@umijs/max';
-import {history, Link} from '@umijs/max';
+import { AvatarDropdown, AvatarName, Footer, Question, SelectLang } from '@/components';
+import { currentUser as queryCurrentUser } from '@/services/ant-design-pro/api';
+import { LinkOutlined } from '@ant-design/icons';
+import type { Settings as LayoutSettings } from '@ant-design/pro-components';
+import { SettingDrawer } from '@ant-design/pro-components';
+import { history, Link, RequestConfig, RunTimeLayoutConfig } from '@umijs/max';
 import defaultSettings from '../config/defaultSettings';
-import {errorConfig} from './requestErrorConfig';
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
@@ -134,6 +132,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
  * 它基于 axios 和 ahooks 的 useRequest 提供了一套统一的网络请求和错误处理方案。
  * @doc https://umijs.org/docs/max/request#配置
  */
-export const request = {
-  errorConfig,
+export const request: RequestConfig = {
+  baseURL:
+    process.env.REACT_APP_ENV === 'prod' ? 'https://user-api.rocli.cn' : 'http://localhost:8080/',
 };

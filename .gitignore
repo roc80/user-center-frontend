@@ -38,4 +38,6 @@ screenshot
 .firebase
 .eslintcache
 
-build
+dist/
+.cache/
+.vscode/
