@@ -3,19 +3,42 @@
 # ==============================
 FROM node:18-alpine AS builder
 
-# 启用 corepack 并设置 pnpm（确保 pnpm 与项目一致）
-RUN corepack enable && corepack prepare pnpm@10.10.0 --activate
-
+# 设置工作目录
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm install
+# 安装必要的系统依赖
+RUN apk add --no-cache git python3 make g++
 
+# 启用 corepack 并设置 pnpm
+RUN corepack enable && corepack prepare pnpm@10.10.0 --activate
+
+# 配置 pnpm 镜像源和超时设置
+RUN pnpm config set registry https://registry.npmmirror.com/ && \
+    pnpm config set network-timeout 600000 && \
+    pnpm config set fetch-timeout 600000 && \
+    pnpm config set fetch-retry-mintimeout 10000 && \
+    pnpm config set fetch-retry-maxtimeout 120000
+
+# 复制 package.json 和 pnpm-lock.yaml（如果存在）
+COPY package.json ./
+COPY pnpm-lock.yaml* ./
+
+# 安装依赖（带重试机制）
+RUN pnpm install --frozen-lockfile --prefer-offline || \
+    (echo "安装失败，清理缓存后重试..." && \
+     pnpm store prune && \
+     rm -rf node_modules && \
+     pnpm install --no-frozen-lockfile --prefer-offline) || \
+    (echo "仍然失败，使用npm镜像重试..." && \
+     pnpm config set registry https://registry.npm.taobao.org/ && \
+     pnpm install --no-frozen-lockfile --prefer-offline)
+
+# 复制项目文件
 COPY . .
 
+# 设置环境变量并构建
 ENV NODE_ENV=production
 ENV UMI_ENV=prod
-
 RUN pnpm run build
 
 # ==============================
