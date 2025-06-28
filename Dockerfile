@@ -6,9 +6,6 @@ FROM node:18-alpine AS builder
 # 设置工作目录
 WORKDIR /app
 
-# 安装必要的系统依赖
-RUN apk add --no-cache git python3 make g++
-
 # 启用 corepack 并设置 pnpm
 RUN corepack enable && corepack prepare pnpm@10.10.0 --activate
 
