@@ -35,7 +35,6 @@ COPY . .
 
 # 设置环境变量并构建
 ENV NODE_ENV=production
-ENV UMI_ENV=prod
 RUN pnpm run build
 
 # ==============================

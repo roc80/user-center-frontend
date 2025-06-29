@@ -134,6 +134,6 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
  */
 export const request: RequestConfig = {
   baseURL:
-    process.env.REACT_APP_ENV === 'prod' ? 'https://user-api.rocli.cn' : 'http://localhost:8080/',
+    process.env.NODE_ENV === 'production' ? 'https://user-api.rocli.cn' : 'http://localhost:8080/',
   withCredentials: true,
 };
