@@ -70,8 +70,8 @@ const Login: React.FC = () => {
         if (loginResponse?.data?.redirectUrl) {
           // 跳转回原系统
           let redirectUrl = loginResponse?.data?.redirectUrl;
-          if (process.env.REACT_APP_ENV === 'dev') {
-            alert(`即将跳转回原系统，redirectUrl = ${redirectUrl}`);
+          if (process.env.NODE_ENV === 'development') {
+            alert(`即将跳转回原系统，redirect_url = ${redirectUrl}`);
           }
           window.location.href = redirectUrl;
         } else {
